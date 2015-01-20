@@ -5,23 +5,30 @@ debug_path: clean all
 release: clean all
 
 LINK= -lSDL2 -lGL -lGLU
-BUILD= main.o render.o debug.o engine.o
-REQ= main.o render.o debug.o engine.o
+BUILD= main.o render.o debug.o engine.o mesh.o entity.o
+REQ= main.o render.o debug.o engine.o mesh.o entity.o
+CC= gcc 
 
 all: $(REQ)
-	gcc $(LINK) $(BUILD)
+	$(CC) $(LINK) $(BUILD)
 
 main.o: main.c
-	gcc -c main.c $(DEBUG)
+	$(CC) -c main.c $(DEBUG)
 
 render.o: render.c
-	gcc -c render.c $(DEBUG)
+	$(CC) -c render.c $(DEBUG)
 
 debug.o: debug.c
-	gcc -c debug.c $(DEBUG)
+	$(CC) -c debug.c $(DEBUG)
 
 engine.o: engine.c
-	gcc -c engine.c $(DEBUG)
+	$(CC) -c engine.c $(DEBUG)
+
+mesh.o: mesh.c
+	$(CC) -c mesh.c $(DEBUG)
+
+entity.o: entity.c
+	$(CC) -c entity.c $(DEBUG)
 
 clean:
 	rm -f a.out *.o

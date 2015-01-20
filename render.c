@@ -6,35 +6,35 @@
 static SDL_Thread * render_thread;
 static SDL_GLContext render_glcontext;
 static GLuint render_program;
-static char * render_vs_source[] = {
-	"#version 330 core\n"
-	"void main(void)\n"
-	"{\n"
-	"	gl_Position = vec4( 0.0, 0.0, 0.5, 1.0);\n"
-	"}\n"
-};
-static char * render_fs_source[] = {
-	"#version 330 core\n"
-	"flat in vec4 vcolor;\n"
-	"out vec4 color;\n"
-	"void main(void)\n"
-	"{\n"
-	"	color = vcolor;\n"
-	"}\n"
-};
 
+char * render_read_shader( char * path )
+{
+	FILE * f = fopen( path, "r" );
+	fseek( f, 0L, SEEK_END );
+	int filesize = ftell( f );
+	fseek( f, 0L, SEEK_SET );
+
+	char * str = malloc( sizeof(char) * (filesize + 1) );
+	fread( str, sizeof( char ), filesize, f );
+	str[filesize] = 0x0;
+	fclose( f );
+
+	return str;
+}
 
 GLuint render_build_program( GLuint * in_program )
 {
 	GLuint vshader, fshader;
 
+	char * vs_source = render_read_shader( "shaders/shader.vert" );
 	vshader = glCreateShader( GL_VERTEX_SHADER );
-	glShaderSource( vshader, 1, render_vs_source, NULL );
+	glShaderSource( vshader, 1, vs_source, NULL );
 	glCompileShader( vshader );
 	debug_check_glsl_error( "compiling vertex shader", vshader );
 
+	char * fs_source = render_read_shader( "shaders/shader.frag" );
 	fshader = glCreateShader( GL_FRAGMENT_SHADER );
-	glShaderSource( fshader, 1, render_fs_source, NULL );
+	glShaderSource( fshader, 1, fs_source, NULL );
 	glCompileShader( fshader );
 	debug_check_glsl_error( "compiling fragment shader", fshader );
 
@@ -46,6 +46,8 @@ GLuint render_build_program( GLuint * in_program )
 
 	glDeleteShader( vshader );
 	glDeleteShader( fshader );
+	free( vs_source );
+	free( fs_source );
 	return 0;
 }
 
