@@ -55,8 +55,6 @@ int render_init_gl( SDL_GLContext * in_glcontext, SDL_Window * in_window )
 {
 	*in_glcontext = SDL_GL_CreateContext( in_window );
 	debug_check_sdl_error( "creating GL context" );
-	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 4 );
-	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 3 );
 	render_build_program( &render_program);
 	debug_check_gl_error( "initializing GL" );
 	debug_check_sdl_error( "initializing SDL" );
