@@ -1,6 +1,6 @@
-#version 430
+#version 330
 
-flat in vec4f vcolor;
+flat in vec4 vcolor;
 out vec4 color;
 
 void main( void )
