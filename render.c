@@ -14,7 +14,7 @@ char * render_read_shader( char * path )
 	int filesize = ftell( f );
 	fseek( f, 0L, SEEK_SET );
 
-	char * str = malloc( sizeof(char) * (filesize + 1) );
+	char * str = calloc( sizeof(char), (filesize + 2) );
 	fread( str, sizeof( char ), filesize, f );
 	str[filesize] = 0x0;
 	fclose( f );
@@ -28,13 +28,13 @@ GLuint render_build_program( GLuint * in_program )
 
 	char * vs_source = render_read_shader( "shaders/shader.vert" );
 	vshader = glCreateShader( GL_VERTEX_SHADER );
-	glShaderSource( vshader, 1, vs_source, NULL );
+	glShaderSource( vshader, 1, &vs_source, NULL );
 	glCompileShader( vshader );
 	debug_check_glsl_error( "compiling vertex shader", vshader );
 
 	char * fs_source = render_read_shader( "shaders/shader.frag" );
 	fshader = glCreateShader( GL_FRAGMENT_SHADER );
-	glShaderSource( fshader, 1, fs_source, NULL );
+	glShaderSource( fshader, 1, &fs_source, NULL );
 	glCompileShader( fshader );
 	debug_check_glsl_error( "compiling fragment shader", fshader );
 
@@ -55,9 +55,8 @@ int render_init_gl( SDL_GLContext * in_glcontext, SDL_Window * in_window )
 {
 	*in_glcontext = SDL_GL_CreateContext( in_window );
 	debug_check_sdl_error( "creating GL context" );
-	glClearColor( 1.f, 1.f, 1.f, 1.f );
-	glClear( GL_COLOR_BUFFER_BIT );
-	SDL_GL_SwapWindow( in_window );
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 4 );
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 3 );
 	render_build_program( &render_program);
 	debug_check_gl_error( "initializing GL" );
 	debug_check_sdl_error( "initializing SDL" );
@@ -73,6 +72,11 @@ int render_destroy_gl( SDL_GLContext in_glcontext )
 int render_function( void * data )
 {
 	render_init_gl( &render_glcontext, (SDL_Window*)data );
+	while( 1 ) {
+		glClearColor( 1.f, 1.f, 1.f, 1.f );
+		glClear( GL_COLOR_BUFFER_BIT );
+		SDL_GL_SwapWindow( data );
+	}
 	render_destroy_gl( render_glcontext );
 }
 
