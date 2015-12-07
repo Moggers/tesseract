@@ -1,7 +1,7 @@
-debug_path: DEBUG= -g -D DEBUG
+testing: DEBUG= -g -D DEBUG
 release: DEBUG=
 
-debug_path: clean all
+testing: clean all
 release: clean all
 
 LINK= -lSDL2 -lGL -lGLU
